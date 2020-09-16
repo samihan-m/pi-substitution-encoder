@@ -3,7 +3,6 @@ Created on Sep 11, 2020
 
 @author: ssmup
 '''
-from _codecs import ascii_encode
 
 class Encoder(object):
     '''
