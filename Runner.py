@@ -330,6 +330,28 @@ if __name__ == "__main__":
     #sliceBounds = slices[3]
     
     '''
+    Make a GUI.
+    Have 3 buttons, with 3 text areas.
+    1 button + 1 text area: picking pi Slice. the textarea/list of options is integers. the button is to select that integer as the pi slice,
+        this can work by generating increasingly longer lengths of pi to see if it has that particular slice within that length
+        (that is if the pi slice option is completely customizable. if its just a list of options i prepick, then i can just store a list of indices in the code.)
+        then it loads the corresponding indices of pi for that slice.
+    1 butto: encode button. text area is where u can paste a string. maybe i can add a button to load a txt file. maybe add a button to save to a text file.
+    1 button + 1 text area: decode button. maybe add a button to load/save to a txt file.
+    1 text area: input. put string/codon array here.
+    1 text area: output. encode/decode go here.
+    
+    **format codon array as [codon].[codon2].[codon3] so i can use a period as a delimiter to read it from a file or something.
+        or just save it with commas instead and use commas as delimiters
+        
+        
+    website?
+    upload txt file - have program scan the file. convert everything to ascii. sort the ascii values, return the highest value. (or just scan for highest ascii value).
+        then use that highest value as the higher end of the codon generator, then use that list of codons to scan pi for slices.
+        so even if there are weird ass characters, the program can dynamically adapt to it.
+    '''
+        
+    '''
     encoded = encodeByBounds(string)
     print(string)
     decoded = decodeByBounds(encoded)

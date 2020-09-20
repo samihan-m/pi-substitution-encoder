@@ -149,7 +149,8 @@ class Encoder(object):
         '''
         numStrings = []
         for codon in codonSubbedList:
-            numString = piSlice[codon:codon+codonLength]
+            index = int(codon)
+            numString = piSlice[index:index+codonLength]
             numStrings.append(numString)
         return numStrings
     
@@ -177,6 +178,7 @@ class Encoder(object):
         Takes a string and returns a string of ascii values, where each character in the original string is turned into an ascii value and concatenated onto the returned string.
         '''
         asciiString = ""
+        string = str(string)
         for character in string:
             asciiValue = str(ord(character))
             asciiString += asciiValue.zfill(3)
