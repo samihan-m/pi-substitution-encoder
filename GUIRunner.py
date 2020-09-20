@@ -34,8 +34,8 @@ class GUIRunner(object):
         self.top.title("Pi-based Data Encoder/Decoder")
         
         #generates a frame to show the data in the encoder
-        self.dataFrame = tk.LabelFrame(self.top, text="Data: Type Here! or Load a File (This can scroll)", height=moddedHeight, width=moddedWidth)
-        self.dataFrameTArea = tk.Text(self.dataFrame,relief=tk.RAISED,width=50)
+        self.dataFrame = tk.LabelFrame(self.top, text="Data: Type Here! or Load a File (This can scroll)")  # height=moddedHeight, width=moddedWidth
+        self.dataFrameTArea = tk.Text(self.dataFrame,relief=tk.RAISED,width=70)
         self.dataToInsert = ""
         self.dataFrameTArea.pack()
         self.errorLabelVar = StringVar(value="Errors will appear here")
@@ -116,6 +116,8 @@ class GUIRunner(object):
         self.resetArc()
         self.startValueVar.set("0")
         self.endValueVar.set("10000")
+        self.dataToInsert = "How To Use This:\nClick Encode Data to turn any text/numbers written here into a string of numbers.\nThis string is based on the numbers you enter for the Pi String bounds. You can also just use the default values.\nOnce you have that encoded string, click Decode Data to return it to readable text. This is also based on the Pi String bound values, so make sure to encode and decode data using the same bounds both times.\n Otherwise you can enter whatever values for pi you want, and if the program has a problem with it (see below for the error bar), it will let you know.\nIf it doesn't work, try increasing the distance between the two bounds. Also, you can try encoding something multiple times (like 3 times), then decoding it that many times to return to the original input. But remember, the bounds have to be the same when you're encoding and decoding the same data. \nUse Update Arc to update the circle display (which represents a slice of pi that you've selected) without Encoding/Decoding anything. Use Reset Arc to reset the bounds and the pi display. I don't really know a reason for it, because you can just change both bounds and click Update, but you can do it.\nLoad a File reads data from a text file and loads it in the Data frame. Save to File takes the data in the frame and saves it to a text file. This is so you can save long encoded strings or something.\nThanks for looking at this!\n-Samihan"
+        self.updateDataFrame()
         self.top.mainloop()
         
     #GUI functions

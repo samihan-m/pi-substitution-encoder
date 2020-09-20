@@ -595,8 +595,8 @@
   ('multiprocessing',
    'd:\\program files\\python38\\lib\\multiprocessing\\__init__.py',
    'PYMODULE'),
-  ('_py_abc', 'd:\\program files\\python38\\lib\\_py_abc.py', 'PYMODULE'),
   ('stringprep', 'd:\\program files\\python38\\lib\\stringprep.py', 'PYMODULE'),
+  ('_py_abc', 'd:\\program files\\python38\\lib\\_py_abc.py', 'PYMODULE'),
   ('GUIRunner',
    'D:\\Program '
    'Files\\Python38\\Programs\\pi-substitution-encoder\\GUIRunner.py',
