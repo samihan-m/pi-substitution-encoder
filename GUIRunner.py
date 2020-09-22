@@ -7,7 +7,6 @@ Created on Sep 11, 2020
 import math #for pi_chudnovsky_bs math
 from gmpy2 import mpz   #for pi_chudnovsky_bs math
 import gmpy2    #for pi_chudnovsky_bs math
-from time import time   #for pi_chudnovsky_bs showing how long it takes to generate pi feature
 from Encoder import Encoder #for Encoder
 import tkinter as tk    #for the gui
 from functools import partial   #for putting commands in Buttons
@@ -35,13 +34,17 @@ class GUIRunner(object):
         
         #generates a frame to show the data in the encoder
         self.dataFrame = tk.LabelFrame(self.top, text="Data: Type Here! or Load a File (This can scroll)")  # height=moddedHeight, width=moddedWidth
-        self.dataFrameTArea = tk.Text(self.dataFrame,relief=tk.RAISED,width=70)
+        self.dataScroll = tk.Scrollbar(self.dataFrame)
+        self.dataScroll.pack(side=tk.RIGHT,fill=tk.Y)
+        self.dataFrameTArea = tk.Text(self.dataFrame,relief=tk.RAISED,width=70,yscrollcommand=self.dataScroll.set)
         self.dataToInsert = ""
-        self.dataFrameTArea.pack()
+        self.dataFrameTArea.pack(fill=tk.BOTH)
+        self.dataScroll.config(command=self.dataFrameTArea.yview)
         self.errorLabelVar = StringVar(value="Errors will appear here")
         self.errorLabel = tk.Label(self.dataFrame,textvariable=self.errorLabelVar)
         self.errorLabel.pack()
         self.dataFrame.pack(side=tk.RIGHT)
+        
         
         #supposed to center the window
         winWidth = self.top.winfo_reqwidth()
@@ -61,7 +64,7 @@ class GUIRunner(object):
         canvWidth = self.piDisplay.winfo_reqwidth()
         canvHeight = self.piDisplay.winfo_reqheight()
         self.piBoundingBox = (canvWidth-moddedCircle)/2, (canvHeight-moddedCircle)/2, (canvWidth+moddedCircle)/2, (canvHeight+moddedCircle)/2
-        baseCircle = self.piDisplay.create_oval(self.piBoundingBox, fill="black")
+        self.piDisplay.create_oval(self.piBoundingBox, fill="black")
         self.startValue = 0
         self.endValue = 10000
         self.startDegree = 0
@@ -155,6 +158,7 @@ class GUIRunner(object):
         Returns true if no errors occur.
         '''
         success = False
+        self.updateErrorLabel("")   #clearing the error frame
         validStart = self.readStartValue()
         validEnd = self.readEndValue()
         if(validStart and validEnd):
@@ -259,68 +263,49 @@ class GUIRunner(object):
         '''
         Refreshes the entered degree values and the arc.
         Then generates a length of pi based on the entered pi limits.
-        Then checks to see if the data entered is encodable within that section of pi.
-        If it is, it prints the encoded data into the data frame.
-        Else, it prints an error into a label below the data frame.
+        It tries to encode the entered data. If it fails, it cancels the whole thing and prints an error message to the error label.
+        Otherwise it prints the encoded data in the data frame.
         '''
         validDegrees = self.updateDegrees()
         self.updateArc()
         if(validDegrees):
-            piString = self.getPi(self.piStringLength)
             heldData = self.dataFrameTArea.get(1.0,tk.END)
             heldData = heldData[:-1]    #removing the newline character at the end of the dataframe
-            #print(heldData)    #DEBUG
-            encoder = Encoder()
-            asciiData = encoder.stringToAscii(heldData)
-            codonArray = [asciiData[i:i+3] for i in range(0, len(asciiData), 3)]
-            highest = 0
-            for codon in codonArray:
-                if int(codon) > highest:
-                    highest = int(codon)
-            trimmedPiString = piString[self.startValue:self.endValue]
-            success = encoder.codonChecker(piString=trimmedPiString,codonLength=len(str(highest)),maxInt=highest)
-            if(success):
+            try:
                 sliceBounds = [self.startValue,self.endValue]
                 encodedData = self.encodeByBounds(heldData,sliceBounds)
                 encodedDataString = ""
                 for index in encodedData:
+                    if(index == -1):    #this triggers if any codon is not found in the pi string. it terminates the encode process.
+                        raise
                     encodedDataString += str(index)
                     encodedDataString += "."
                 encodedDataString = encodedDataString[:-1]
                 self.dataToInsert = encodedDataString
                 self.updateDataFrame()
-            else:
+            except:
                 self.updateErrorLabel("ENCODE FAILED - Increase the bounds or load different data.")
     
     def decode(self):
         '''
         Refreshes the entered degree values and the arc.
         Then generates a length of pi based on the entered pi limits.
-        Then checks to see if the data entered is decodable within that section of pi.
-        If it is, it prints the decoded data into the data frame.
-        Else, it prints an error into a label below the data frame.
+        It tries to decode the entered data. If it fails, it cancels the whole thing and prints an error message to the error label.
+        Otherwise it prints the decoded data in the data frame.
         '''
         validDegrees = self.updateDegrees()
         self.updateArc()
         if(validDegrees):
-            piString = self.getPi(self.piStringLength)
             heldData = self.dataFrameTArea.get(1.0,tk.END)
             heldData = heldData[:-1]    #removing the newline character at the end of the dataframe
-            #print(heldData)     #DEBUG
-            encoder = Encoder()
             heldData = str(heldData)
             indexList = heldData.split('.')
-            highest = 0
-            for index in indexList:
-                if int(index) > highest:
-                    highest = int(index)
-            success = (highest <= len(piString))
-            if(success):
+            try:
                 sliceBounds = [self.startValue,self.endValue]
                 decodedData = self.decodeByBounds(indexList, sliceBounds)
                 self.dataToInsert = decodedData
                 self.updateDataFrame()
-            else:
+            except:
                 self.updateErrorLabel("DECODE FAILED - Increase the bounds or load different data")
             
     #basic runner/encoder functions
@@ -387,7 +372,6 @@ class GUIRunner(object):
         1000000 : 58151,
        10000000 : 55897,
     }
-    
     
     def getPi(self,length = 8555, startLength = 0):
         '''
